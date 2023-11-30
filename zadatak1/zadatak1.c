@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
            
             MPI_Send(&send_number, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
             
-            sent_numbers[dest] = send_number;  // Označavanje poslatog broja
+            sent_numbers[dest] = send_number; 
         }
     }
 
@@ -42,7 +42,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Ispisivanje primljenih brojeva
     printf("Process %d received:", prank);
     for (int i = 0; i < csize; i++) {
         if (received_numbers[i] != -1) {

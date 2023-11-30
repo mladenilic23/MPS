@@ -10,8 +10,8 @@ double getInput() {
 }
 
 int main(int argc, char* argv[]) {
-    double n;
-    double sum = 0;
+    int n;
+    int sum = 0;
     int csize, prank;
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &csize);
@@ -24,16 +24,35 @@ int main(int argc, char* argv[]) {
     MPI_Bcast(&n, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     double s = MPI_Wtime();
-    double ds = (double)csize;
-    double chunk_size = n / ds;
-    double start = chunk_size * (double)prank + 1;
-    double end = (prank == csize - 1) ? n : start + chunk_size - 1;
+    
+    int width = n/csize;  
+    int left_out = csize - n % csize; //ostatak
 
-    for (double i = start; i <= end; i++) {
-        sum += i;
+    int pos;  //pozicija svakog procesa
+
+    if(prank == 0)
+        pos = 1;
+    else if(prank < left_out)
+        pos = width + 1 + (prank - 1)*width;
+    else if(prank == left_out)
+        pos = width*left_out + 1;
+    else if(prank > left_out)
+        pos = 1 + width*prank + prank - left_out;
+
+        
+    if(left_out != csize)
+        if(prank >= left_out)
+            width++;
+
+    int i = 0;
+
+    while (i < width){
+        sum += pos;
+        pos++;
+        i++;
     }
-
-    double tsum;
+    
+    int tsum;
 
     MPI_Reduce(&sum, &tsum, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
@@ -44,7 +63,7 @@ int main(int argc, char* argv[]) {
     MPI_Reduce(&d, &mind, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
     if (prank == 0) {
-        printf("Sum first %f integer is %f\n", n, tsum);
+        printf("Sum first %d integer is %d\n", n, tsum);
         printf("Elapsed time: %f\n", d);
     }
 
