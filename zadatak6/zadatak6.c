@@ -50,7 +50,7 @@ void eratostenovo_sito(int n, const char* filename, int chunk_size, int dynamic_
     free(is_prime);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     int n, chunk_size;
     printf("Limit for prime numbers: ");
     scanf("%d", &n);

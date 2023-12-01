@@ -43,7 +43,7 @@ void logRes(const char *fname, double *res, int n)
     fclose(f);
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
     int csize;
     int prank;
